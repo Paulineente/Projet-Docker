@@ -1,0 +1,94 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-3iw
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  php1:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: php1-3iw
+    working_dir: /var/www/html
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      SERVER_NAME: Serveur 1
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  php2:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: php2-3iw
+    working_dir: /var/www/html
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: laravel
+      DB_USERNAME: laravel
+      DB_PASSWORD: secret
+      SERVER_NAME: Serveur 2
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  nginx1:
+    image: nginx:alpine
+    container_name: nginx1-3iw
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx1.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php1
+    networks:
+      - app-network
+
+  nginx2:
+    image: nginx:alpine
+    container_name: nginx2-3iw
+    ports:
+      - "8081:80"
+    volumes:
+      - .:/var/www/html
+      - ./docker/nginx2.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php2
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
