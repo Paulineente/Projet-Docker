@@ -1,64 +1,69 @@
 services:
-  mysql:
+  mysql-db:
     image: mysql:8.0
     container_name: mysql-3iw
+    hostname: esgi-mysql
     environment:
       MYSQL_DATABASE: laravel
       MYSQL_ROOT_PASSWORD: root
       MYSQL_USER: laravel
       MYSQL_PASSWORD: secret
     ports:
-      - "3307:3306"
+      - "3307:3307"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - app-network
+      - tp3iw_esgi_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
   php1:
+    image: php-laravel-esgi
     build:
       context: .
       dockerfile: docker/Dockerfile
     container_name: php1-3iw
     working_dir: /var/www/html
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_HOST: esgi-mysql
+      DB_PORT: 3307
       DB_DATABASE: laravel
       DB_USERNAME: laravel
       DB_PASSWORD: secret
       SERVER_NAME: Serveur 1
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html
+      - esgi_tp_final_cache:/cache:ro
     depends_on:
-      mysql:
+      mysql-db:
         condition: service_healthy
     networks:
-      - app-network
+      - tp3iw_esgi_net
 
   php2:
+    image: php-laravel-esgi
     build:
       context: .
       dockerfile: docker/Dockerfile
     container_name: php2-3iw
     working_dir: /var/www/html
     environment:
-      DB_HOST: mysql
-      DB_PORT: 3306
+      DB_HOST: esgi-mysql
+      DB_PORT: 3307
       DB_DATABASE: laravel
       DB_USERNAME: laravel
       DB_PASSWORD: secret
       SERVER_NAME: Serveur 2
     volumes:
-      - .:/var/www/html
+      - ./:/var/www/html
+      - esgi_tp_final_cache:/cache:ro
     depends_on:
-      mysql:
+      mysql-db:
         condition: service_healthy
     networks:
-      - app-network
+      - tp3iw_esgi_net
 
   nginx1:
     image: nginx:alpine
@@ -71,7 +76,7 @@ services:
     depends_on:
       - php1
     networks:
-      - app-network
+      - tp3iw_esgi_net
 
   nginx2:
     image: nginx:alpine
@@ -84,11 +89,12 @@ services:
     depends_on:
       - php2
     networks:
-      - app-network
+      - tp3iw_esgi_net
 
 networks:
-  app-network:
+  tp3iw_esgi_net:
     driver: bridge
 
 volumes:
   mysql_data:
+  esgi_tp_final_cache:

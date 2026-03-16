@@ -101,16 +101,28 @@
                 font-family: 'Nunito', sans-serif;
             }
         </style>
+        <style>
+            .esgi-server-label {
+                background: #ec4899; /* rose */
+                color: white;
+                padding: 8px 16px;
+                border-radius: 9999px;
+                font-size: 16px;
+                font-weight: bold;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+                z-index: 50;
+                position: absolute;
+            }
+        </style>
     </head>
 
     <body class="antialiased">
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center py-4 sm:pt-0">
 
             {{-- Affichage du nom du serveur --}}
-            <div class="absolute top-4 left-4 bg-white dark:bg-gray-800 shadow px-4 py-2 rounded text-lg font-bold text-gray-900 dark:text-white">
+            <span class="esgi-server-label absolute">
                 {{ env('SERVER_NAME', 'Serveur inconnu') }}
-            </div>
-
+            </span>
             @if (Route::has('login'))
                 <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
                     @auth

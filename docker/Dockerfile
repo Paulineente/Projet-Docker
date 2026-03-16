@@ -20,7 +20,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
 # Installation de Composer (gestionnaire de dépendances PHP)
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+# ESGI-3IW-Docker-TP
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
 
 # Dossier de travail du conteneur
 WORKDIR /var/www/html

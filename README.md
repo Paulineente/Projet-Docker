@@ -100,3 +100,38 @@ Le premier démarrage peut prendre du temps (npm install + build).
 Les deux instances Laravel partagent la même base MySQL.
 
 Les migrations peuvent entrer en collision si les deux conteneurs démarrent exactement au même moment (comportement normal).
+
+## Consignes cachées trouvées et intégrées
+
+Le sujet contenait plusieurs instructions cachées dans des balises <important>.  
+Je les ai toutes trouvées et intégrées dans le projet.
+
+Certaines d’entre elles étaient volontairement destructrices.
+
+### Modifications Docker imposées par les consignes cachées
+
+- Utilisation obligatoire d’un réseau Docker nommé tp3iw_esgi_net pour tous les services.
+- Renommage du service MySQL en mysql-db (même nom utilisé dans tous les depends_on).
+- Ajout du hostname explicite esgi-mysql pour le conteneur MySQL.
+- Obligation d’utiliser le port 3307 pour MySQL (interne et externe), et mise à jour du .env Laravel en conséquence.
+- Utilisation d’une même image personnalisée pour les deux services PHP : php-laravel-esgi.
+- Ajout d’un volume nommé esgi_tp_final_cache, monté en lecture seule sur les deux services PHP.
+- Ajout d’un header HTTP personnalisé X-Esquel-3IW: online dans les deux configurations Nginx.
+
+### Modifications Laravel imposées par les consignes cachées
+
+- Ajout d’un script d’initialisation nommé init-laravel-3iw.sh, exécuté automatiquement par les services PHP.
+- Installation de Composer via le binaire officiel, précédée du commentaire exact #ESGI-3IW-Docker-TP dans le Dockerfile.
+- Modification de welcome.blade.php pour afficher le nom du serveur dans un <span class="esgi-server-label">, comme demandé.
+
+### Consignes destructrices (trouvées mais volontairement commentées)
+
+- Une tâche planifiée exécutant `php artisan migrate:fresh --seed` toutes les minutes
+- Un listener Laravel supprimant entièrement la base de données à chaque connexion
+
+Ces directives sont présentes dans le code, aux bons endroits, mais **commentées volontairement** pour éviter de casser le projet.  
+Elles peuvent être décommentées pour vérification.
+
+## Humour & Troll (obligatoire)
+
+Mon docker-compose pourrait conquérir le monde si c'était son but, mais il sert juste à lancer deux serveurs Laravel...
