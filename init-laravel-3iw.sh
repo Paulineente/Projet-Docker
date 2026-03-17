@@ -28,7 +28,7 @@ fi
 
 # Attente que MySQL soit disponible avant de lancer les migrations
 echo "En attente de MySQL..."
-until php -r "try { new PDO('mysql:host=mysql;port=3306;dbname=laravel', 'laravel', 'secret'); } catch (Exception \$e) { exit(1); }"; do
+until php -r "try { new PDO('mysql:host=esgi-mysql;port=3306;dbname=laravel', 'laravel', 'secret'); } catch (Exception \$e) { exit(1); }"; do
     echo "MySQL n'est pas encore prêt, nouvelle tentative..."
     sleep 2
 done
