@@ -28,8 +28,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 WORKDIR /var/www/html
 
 # Ajout du script d'initialisation Laravel dans le conteneur
-COPY ./init-laravel-3iw.sh /usr/local/bin/init.sh
-RUN chmod +x /usr/local/bin/init.sh
+COPY ./init-laravel-3iw.sh /usr/local/bin/init-laravel-3iw.sh
+RUN chmod +x /usr/local/bin/init-laravel-3iw.sh
 
 # Autorise PHP-FPM à récupérer les variables d'environnement du conteneur
 RUN sed -i 's/^;clear_env = no/clear_env = no/' /usr/local/etc/php-fpm.d/www.conf
@@ -38,4 +38,4 @@ RUN sed -i 's/^;clear_env = no/clear_env = no/' /usr/local/etc/php-fpm.d/www.con
 EXPOSE 9000
 
 # Le conteneur démarre en exécutant le script d'init Laravel
-ENTRYPOINT ["/usr/local/bin/init.sh"]
+ENTRYPOINT ["/usr/local/bin/init-laravel-3iw.sh"]
